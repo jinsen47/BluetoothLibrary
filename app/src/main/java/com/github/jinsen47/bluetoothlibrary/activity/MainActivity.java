@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         fab = (FloatingActionButton) findViewById(R.id.fab);
     }
     private void initData() {
-        mAdapter = new MainPagerAdapter(getSupportFragmentManager());
+        mAdapter = new MainPagerAdapter(getSupportFragmentManager(), this);
         mPager.setAdapter(mAdapter);
         layoutTab.setTabsFromPagerAdapter(mAdapter);
     }

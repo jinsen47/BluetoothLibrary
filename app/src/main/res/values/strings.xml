@@ -6,4 +6,9 @@
     <string name="time_connecting">Connect time : %d ms</string>
     <string name="time_retry">Retry times : %d </string>
     <string name="time_service_discovering">Service discovering time : %d ms</string>
+
+    <array name="bluetooth_library">
+        <item>Lite Bluetooth</item>
+        <item>Gizwits BLE</item>
+    </array>
 </resources>
