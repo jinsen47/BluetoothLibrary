@@ -4,6 +4,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import com.github.jinsen47.bluetoothlibrary.fragment.BluetoothFragment;
+
 /**
  * Created by Jinsen on 15/9/22.
  */
@@ -21,7 +23,19 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        return null;
+        Fragment fragment;
+        switch (position) {
+            case 0:
+                fragment = new BluetoothFragment();
+                break;
+            case 1:
+                fragment = new BluetoothFragment();
+                break;
+            default:
+                fragment = new BluetoothFragment();
+                break;
+        }
+        return fragment;
     }
 
     @Override

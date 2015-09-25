@@ -2,5 +2,8 @@
 <resources>
     <string name="time_search">搜索时间 : %d ms</string>
     <string name="time_connecting">连接时间 : %d ms</string>
-    <stirng name="time_retry">重连次数 : %d</stirng>
+    <string name="time_retry">重连次数 : %d</string>
+    <string name="action_settings">设置</string>
+    <string name="app_name">蓝牙测试工具</string>
+    <string name="time_service_discovering">服务搜索时间 : %d ms</string>
 </resources>

@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private void initData() {
         mAdapter = new MainPagerAdapter(getSupportFragmentManager());
         mPager.setAdapter(mAdapter);
+        layoutTab.setTabsFromPagerAdapter(mAdapter);
     }
 
     private void setListeners() {

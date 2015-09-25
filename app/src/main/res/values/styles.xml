@@ -14,6 +14,9 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+
+    <style name="AppTheme.Headline" parent="TextAppearance.AppCompat.Headline"/>
+    <style name="AppTheme.Title" parent="TextAppearance.AppCompat.Title"/>
     <style name="AppTheme.Subhead" parent="TextAppearance.AppCompat.Subhead"/>
     <style name="AppTheme.Body1" parent="TextAppearance.AppCompat.Body1"/>
     <style name="AppTheme.Body2" parent="TextAppearance.AppCompat.Body2"/>

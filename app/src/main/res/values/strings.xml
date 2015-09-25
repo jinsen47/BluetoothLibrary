@@ -4,5 +4,6 @@
 
     <string name="time_search">Search time : %d ms</string>
     <string name="time_connecting">Connect time : %d ms</string>
-    <stirng name="time_retry">Retry times %d </stirng>
+    <string name="time_retry">Retry times : %d </string>
+    <string name="time_service_discovering">Service discovering time : %d ms</string>
 </resources>
