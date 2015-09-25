@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">BluetoothLibrary</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="time_search">Search time : %d ms</string>
+    <string name="time_connecting">Connect time : %d ms</string>
+    <stirng name="time_retry">Retry times %d </stirng>
+</resources>

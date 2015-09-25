@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="time_search">搜索时间 : %d ms</string>
+    <string name="time_connecting">连接时间 : %d ms</string>
+    <stirng name="time_retry">重连次数 : %d</stirng>
+</resources>
