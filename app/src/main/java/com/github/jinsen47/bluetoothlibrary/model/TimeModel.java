@@ -11,6 +11,10 @@ public class TimeModel implements Serializable {
     private int serviceDiscoverTime;
     private int retryTimes;
 
+    private long searchStartTime;
+    private long connectStartTime;
+    private long serviceDiscoverStartTime;
+
     public TimeModel() {
     }
 
@@ -18,31 +22,44 @@ public class TimeModel implements Serializable {
         return searchTime;
     }
 
-    public void setSearchTime(int searchTime) {
-        this.searchTime = searchTime;
+    public void setSearchStartTime(long searchStartTime) {
+        this.searchStartTime = searchStartTime;
+    }
+
+    public void setSearchStopTime(long searchStopTime) {
+        this.searchTime = ((int) (searchStopTime - searchStartTime));
+    }
+
+    public void setConnectStartTime(long connectStartTime) {
+        this.connectStartTime = connectStartTime;
+    }
+
+    public void setConnectStopTime(long connectStopTime) {
+        this.connectTime = ((int) (connectStopTime - connectStartTime));
     }
 
     public int getConnectTime() {
         return connectTime;
     }
 
-    public void setConnectTime(int connectTime) {
-        this.connectTime = connectTime;
+    public void setServiceStartTime(long serviceStartTime) {
+        this.serviceDiscoverStartTime = serviceStartTime;
+    }
+
+    public void setServiceStopTime(long serviceStopTime) {
+        this.serviceDiscoverTime = ((int) (serviceStopTime - serviceDiscoverStartTime));
     }
 
     public int getServiceDiscoverTime() {
         return serviceDiscoverTime;
     }
 
-    public void setServiceDiscoverTime(int serviceDiscoverTime) {
-        this.serviceDiscoverTime = serviceDiscoverTime;
+    public void setRetryTimes(int retryTimes) {
+        this.retryTimes = retryTimes;
     }
 
     public int getRetryTimes() {
         return retryTimes;
     }
 
-    public void setRetryTimes(int retryTimes) {
-        this.retryTimes = retryTimes;
-    }
 }

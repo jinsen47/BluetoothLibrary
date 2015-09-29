@@ -12,4 +12,11 @@
         <item>Lite Bluetooth</item>
         <item>机智云</item>
     </array>
+    <string name="action_search_cadence">搜索踏频</string>
+    <string name="action_search_meter">搜索码表</string>
+    <string name="action_search_thumb">搜索按键</string>
+    <string name="status_connected">已连接</string>
+    <string name="status_connecting">正在连接..</string>
+    <string name="status_searching">搜索中..</string>
+    <string name="status_disconnect">已断开</string>
 </resources>

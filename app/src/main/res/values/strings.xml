@@ -11,4 +11,13 @@
         <item>Lite Bluetooth</item>
         <item>Gizwits BLE</item>
     </array>
+    
+    <string name="action_search_thumb">Search Thumb</string>
+    <string name="action_search_cadence">Search Cadence</string>
+    <string name="action_search_meter">Search Meter</string>
+
+    <string name="status_searching">Searching...</string>
+    <string name="status_connecting">Connecting...</string>
+    <string name="status_connected">Connected</string>
+    <string name="status_disconnect">Disconnected</string>
 </resources>

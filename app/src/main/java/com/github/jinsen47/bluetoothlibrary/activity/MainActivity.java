@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
         mAdapter = new MainPagerAdapter(getSupportFragmentManager(), this);
         mPager.setAdapter(mAdapter);
         layoutTab.setTabsFromPagerAdapter(mAdapter);
+        layoutTab.setupWithViewPager(mPager);
     }
 
     private void setListeners() {

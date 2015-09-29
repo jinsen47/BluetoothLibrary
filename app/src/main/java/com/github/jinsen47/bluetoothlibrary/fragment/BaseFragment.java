@@ -20,10 +20,11 @@ public abstract class BaseFragment extends Fragment{
         View v = inflater.inflate(setLayout(), container, false);
         initViews(v);
         setListeners();
+        setHasOptionsMenu(true);
         return v;
     }
 
-    abstract int setLayout();
-    abstract void initViews(View rootView);
-    abstract void setListeners();
+    protected abstract int setLayout();
+    protected abstract void initViews(View rootView);
+    protected abstract void setListeners();
 }
