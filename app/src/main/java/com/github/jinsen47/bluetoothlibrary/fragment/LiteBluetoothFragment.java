@@ -11,6 +11,7 @@ import android.view.MenuItem;
 
 import com.github.jinsen47.bluetoothlibrary.R;
 import com.github.jinsen47.bluetoothlibrary.model.TimeModel;
+import com.github.jinsen47.bluetoothlibrary.util.BluetoothDeviceUtil;
 import com.litesuits.bluetooth.LiteBluetooth;
 import com.litesuits.bluetooth.conn.ConnectError;
 import com.litesuits.bluetooth.conn.ConnectListener;
@@ -30,6 +31,8 @@ public class LiteBluetoothFragment extends BluetoothFragment {
 
     private TimeModel mTimeData = new TimeModel();
 
+    private TestDevice device;
+
     @Override
     protected void initBluetooth() {
         mLiteBluetooth = new LiteBluetooth(getActivity());
@@ -41,17 +44,37 @@ public class LiteBluetoothFragment extends BluetoothFragment {
 
             @Override
             public void onLeScan(final BluetoothDevice bluetoothDevice, int i, byte[] bytes) {
-                byte[] scanRecord = bytes;
-                if((scanRecord[8]==17 && scanRecord[9]==18 && scanRecord[10]==3)
-                        || (scanRecord[11]==17 && scanRecord[12]==18 && scanRecord[13]==3)){
+                boolean hasFindDevice = false;
+                switch (device) {
+                    case Thumb:
+                        if (BluetoothDeviceUtil.isThumb(bytes)) {
+                            Log.d(TAG, "Stop scan, find Thumb!");
+                        }
+                        hasFindDevice = true;
+                        break;
+                    case Cadence:
+                        if (BluetoothDeviceUtil.isCadence(bytes)) {
+                            Log.d(TAG, "Stop scan, find Cadence!");
+                        }
+                        hasFindDevice = true;
+                        break;
+                    case Meter:
+                        if (BluetoothDeviceUtil.isMeter(bytes)) {
+                            Log.d(TAG, "Stop scan, find Meter!");
+                        }
+                        hasFindDevice = true;
+                        break;
+                    default:
+                        break;
+
+                }
+                if (hasFindDevice) {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             mLiteBluetooth.stopScan(mScanCallback);
-                            Log.d(TAG, "Stop scan, find Thumb!");
                             mTimeData.setSearchStopTime(System.currentTimeMillis());
                             mLiteBluetooth.connect(bluetoothDevice, true, mConnectListener);
-
                         }
                     });
                 }
@@ -140,20 +163,29 @@ public class LiteBluetoothFragment extends BluetoothFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_search_thumb:
-                // TODO search thumb
-                mLiteBluetooth.startScan(mScanCallback);
-                mTimeData.setSearchStartTime(System.currentTimeMillis());
-                setStatusTitle(R.string.status_searching);
+                searchDevice();
+                device = TestDevice.Thumb;
                 break;
             case R.id.action_search_cadence:
-                // TODO search cadence
+                searchDevice();
+                device = TestDevice.Cadence;
                 break;
             case R.id.action_search_meter:
-                // TODO search meter
+                searchDevice();
+                device = TestDevice.Meter;
                 break;
             default:
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
+
+    private void searchDevice() {
+        mTimeData.clear();
+        mLiteBluetooth.startScan(mScanCallback);
+        mTimeData.setSearchStartTime(System.currentTimeMillis());
+        setStatusTitle(R.string.status_searching);
+    }
+
+    public static enum TestDevice {Thumb, Cadence, Meter};
 }

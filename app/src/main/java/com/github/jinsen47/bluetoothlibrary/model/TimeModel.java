@@ -18,6 +18,17 @@ public class TimeModel implements Serializable {
     public TimeModel() {
     }
 
+    public void clear() {
+        searchTime = 0;
+        connectTime = 0;
+        serviceDiscoverTime = 0;
+        retryTimes = 0;
+
+        searchStartTime = 0;
+        connectStartTime = 0;
+        serviceDiscoverStartTime = 0;
+    }
+
     public int getSearchTime() {
         return searchTime;
     }
