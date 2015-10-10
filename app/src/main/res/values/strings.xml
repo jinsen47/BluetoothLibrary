@@ -20,4 +20,6 @@
     <string name="status_connecting">Connecting...</string>
     <string name="status_connected">Connected</string>
     <string name="status_disconnect">Disconnected</string>
+    <string name="status_fail">Failed</string>
+    <string name="action_disconnect">Disconnect</string>
 </resources>

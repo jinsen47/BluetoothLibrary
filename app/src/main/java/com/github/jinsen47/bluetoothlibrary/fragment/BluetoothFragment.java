@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import com.github.jinsen47.bluetoothlibrary.R;
 import com.github.jinsen47.bluetoothlibrary.adapter.BriefAdapter;
+import com.github.jinsen47.bluetoothlibrary.model.LogModel;
 import com.github.jinsen47.bluetoothlibrary.model.TimeModel;
 
 /**
@@ -45,6 +46,11 @@ public abstract class BluetoothFragment extends BaseFragment {
 
     protected void setTimeData(TimeModel data) {
         mAdapter.setTimeData(data);
+        mAdapter.notifyDataSetChanged();
+    }
+
+    protected void setLogData(LogModel data) {
+        mAdapter.setLogData(data);
         mAdapter.notifyDataSetChanged();
     }
 
