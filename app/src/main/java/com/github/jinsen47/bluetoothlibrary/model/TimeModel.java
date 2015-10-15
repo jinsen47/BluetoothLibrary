@@ -15,6 +15,11 @@ public class TimeModel implements Serializable {
     private long connectStartTime;
     private long serviceDiscoverStartTime;
 
+    private boolean isConnectPassed;
+    private boolean isNotifyPassed;
+
+    private String failMessage;
+
     public TimeModel() {
     }
 
@@ -73,4 +78,27 @@ public class TimeModel implements Serializable {
         return retryTimes;
     }
 
+    public boolean isConnectPassed() {
+        return isConnectPassed;
+    }
+
+    public void setIsConnectPassed(boolean isConnectPassed) {
+        this.isConnectPassed = isConnectPassed;
+    }
+
+    public boolean isNotifyPassed() {
+        return isNotifyPassed;
+    }
+
+    public void setIsNotifyPassed(boolean isNotifyPassed) {
+        this.isNotifyPassed = isNotifyPassed;
+    }
+
+    public String getFailMessage() {
+        return failMessage;
+    }
+
+    public void setFailMessage(String failMessage) {
+        this.failMessage = failMessage;
+    }
 }

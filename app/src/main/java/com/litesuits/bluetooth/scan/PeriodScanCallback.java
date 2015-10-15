@@ -13,6 +13,14 @@ public abstract class PeriodScanCallback extends BluetoothHelper implements Blue
     private Handler handler = new Handler(Looper.getMainLooper());
     private long             timeoutMillis;
     private BluetoothAdapter adapter;
+    private Runnable scantimeoutRunnable = new Runnable() {
+        @Override
+        public void run() {
+            stopScanAndNotify();
+            onScanTimeout();
+
+        }
+    };
 
     protected PeriodScanCallback(final long timeoutMillis, final BluetoothAdapter adapter) {
         this.timeoutMillis = timeoutMillis;
@@ -24,14 +32,7 @@ public abstract class PeriodScanCallback extends BluetoothHelper implements Blue
     public void notifyScanStarted() {
         if (timeoutMillis > 0) {
             notifyScanStoped();
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    stopScanAndNotify();
-                    onScanTimeout();
-
-                }
-            }, timeoutMillis);
+            handler.postDelayed(scantimeoutRunnable, timeoutMillis);
         }
     }
 
@@ -42,7 +43,10 @@ public abstract class PeriodScanCallback extends BluetoothHelper implements Blue
     }
 
     public void notifyScanStoped() {
-        if (handler != null) handler.removeCallbacksAndMessages(null);
+        if (handler != null) {
+            handler.removeCallbacks(scantimeoutRunnable);
+            handler.removeCallbacksAndMessages(null);
+        }
     }
 
     public long getTimeoutMillis() {

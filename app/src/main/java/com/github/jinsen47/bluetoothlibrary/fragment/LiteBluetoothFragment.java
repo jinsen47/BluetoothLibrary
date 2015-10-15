@@ -3,28 +3,28 @@ package com.github.jinsen47.bluetoothlibrary.fragment;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
-import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.github.jinsen47.bluetoothlibrary.R;
+import com.github.jinsen47.bluetoothlibrary.model.CycleTestModel;
 import com.github.jinsen47.bluetoothlibrary.model.LogModel;
 import com.github.jinsen47.bluetoothlibrary.model.TimeModel;
 import com.github.jinsen47.bluetoothlibrary.util.BluetoothDeviceUtil;
-import com.github.jinsen47.bluetoothlibrary.util.LogcatUtil;
 import com.litesuits.bluetooth.LiteBluetooth;
 import com.litesuits.bluetooth.conn.ConnectError;
 import com.litesuits.bluetooth.conn.ConnectListener;
 import com.litesuits.bluetooth.conn.ConnectState;
 import com.litesuits.bluetooth.scan.PeriodScanCallback;
+import com.litesuits.bluetooth.utils.HandlerUtil;
 import com.litesuits.bluetooth.utils.HexUtil;
 
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -33,6 +33,7 @@ import java.util.UUID;
 public class LiteBluetoothFragment extends BluetoothFragment {
     private static final String TAG = LiteBluetoothFragment.class.getSimpleName();
     private static final long TIME_OUT = 5000;
+    private long SCAN_INTERVAL = 5000;
 
     private LiteBluetooth mLiteBluetooth;
     private PeriodScanCallback mScanCallback;
@@ -40,10 +41,13 @@ public class LiteBluetoothFragment extends BluetoothFragment {
 
     private TimeModel mTimeData = new TimeModel();
     private LogModel mLogData = new LogModel();
+    private CycleTestModel mCycleTestData = new CycleTestModel();
 
     private TestDevice device;
 
     private String connectingMac;
+    private boolean isTesting = false;
+
 
     private final UUID service_uuid = UUID.fromString("0000fff0-0000-1000-8000-00805f9b34fb");
     private final UUID characteristic_uuid = UUID.fromString("0000fff1-0000-1000-8000-00805f9b34fb");
@@ -85,15 +89,21 @@ public class LiteBluetoothFragment extends BluetoothFragment {
 
                 }
                 if (hasFindDevice) {
-                    connectingMac = bluetoothDevice.getAddress();
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mLiteBluetooth.stopScan(mScanCallback);
-                            mTimeData.setSearchStopTime(System.currentTimeMillis());
-                            mLiteBluetooth.connect(bluetoothDevice, true, mConnectListener);
-                        }
-                    });
+                    if (TextUtils.isEmpty(connectingMac)) {
+                        connectingMac = bluetoothDevice.getAddress();
+                    }
+                    if (bluetoothDevice.getAddress().equals(connectingMac)) {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mScanCallback.stopScanAndNotify();
+                                mTimeData.setSearchStopTime(System.currentTimeMillis());
+                                mLiteBluetooth.connect(bluetoothDevice, true, mConnectListener);
+                            }
+                        });
+                    } else {
+                        // 此次扫描未发现测试设备
+                    }
                 }
             }
         };
@@ -122,6 +132,8 @@ public class LiteBluetoothFragment extends BluetoothFragment {
 
                                 mTimeData.setServiceStartTime(System.currentTimeMillis());
                                 mLogData.setMac(connectingMac);
+                                mCycleTestData.setMac(connectingMac);
+                                mTimeData.setIsConnectPassed(true);
                             }
                         });
                         break;
@@ -149,19 +161,31 @@ public class LiteBluetoothFragment extends BluetoothFragment {
             public void onFailed(ConnectError error) {
                 Log.d(TAG, "Connect Fail!\t" + error.getMessage());
                 setStatusTitle(R.string.status_fail);
+                mTimeData.setIsConnectPassed(false);
+                mTimeData.setFailMessage(error.getMessage());
+                stopCurrentTest(false);
+                startNextTest();
             }
 
             @Override
             public void onServicesDiscovered(BluetoothGatt gatt) {
                 Log.d(TAG, "Service Discovered!");
+                mTimeData.setServiceStopTime(System.currentTimeMillis());
                 BluetoothGattService service = gatt.getService(service_uuid);
                 if (service != null) {
                     Log.d(TAG, "Enable Notifiy!");
                     BluetoothGattCharacteristic characteristic = getBluetoothGatt().getService(service_uuid).getCharacteristic(characteristic_uuid);
                     BluetoothGattDescriptor descriptor = characteristic.getDescriptor(DESC_CCC);
                     enableCharacteristicNotification(getBluetoothGatt(), characteristic, descriptor.getUuid().toString());
+                    stopCurrentTest(true);
+                    startNextTest();
+                } else {
+                    mTimeData.setFailMessage("没有所需service");
+                    mTimeData.setIsNotifyPassed(false);
+                    stopCurrentTest(false);
+                    startNextTest();
                 }
-                mTimeData.setServiceStopTime(System.currentTimeMillis());
+
             }
 
             @Override
@@ -186,8 +210,9 @@ public class LiteBluetoothFragment extends BluetoothFragment {
         };
         setTimeData(mTimeData);
         setLogData(mLogData);
-        LogcatUtil logcat = new LogcatUtil(mLogData.getLog());
-        logcat.start();
+        setCycleTestData(mCycleTestData);
+//        LogcatUtil logcat = new LogcatUtil(mLogData.getLog());
+//        logcat.start();
     }
 
     @Override
@@ -200,6 +225,21 @@ public class LiteBluetoothFragment extends BluetoothFragment {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.menu_lite_bluetooth, menu);
     }
+
+//    @Override
+//    public void onPrepareOptionsMenu(Menu menu) {
+//        super.onPrepareOptionsMenu(menu);
+//        if (isTesting) {
+//            menu.clear();
+//        } else if (menu.hasVisibleItems()){
+//            return;
+//        } else {
+//            menu.clear();
+//            menu.add(0, R.id.action_search_thumb, 0, R.string.action_search_thumb);
+//            menu.add(0, R.id.action_search_meter, 1, R.string.action_search_cadence);
+//            menu.add(0, R.id.action_search_cadence, 2, R.string.action_search_meter);
+//        }
+//    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -226,12 +266,42 @@ public class LiteBluetoothFragment extends BluetoothFragment {
     }
 
     private void searchDevice() {
+        Log.d(TAG, "SearchDevice is called");
         mLiteBluetooth.closeAllConnects();
-        mTimeData.clear();
+        mScanCallback.stopScanAndNotify();
+        isTesting = true;
         mLiteBluetooth.startScan(mScanCallback);
         mTimeData.setSearchStartTime(System.currentTimeMillis());
         setStatusTitle(R.string.status_searching);
     }
 
-    public static enum TestDevice {Thumb, Cadence, Meter};
+    private void stopCurrentTest(boolean isPass) {
+        mCycleTestData.addTimeModel(mTimeData, isPass);
+//        mTimeData = null;
+    }
+
+    private void startNextTest() {
+        Log.d(TAG, "start next test");
+//        mTimeData = new TimeModel();
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                setTimeData(mTimeData);
+            }
+        });
+//        HandlerUtil.HANDLER.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                searchDevice();
+//            }
+//        }, SCAN_INTERVAL);
+
+    }
+
+    private void stopCycleTest() {
+        isTesting = false;
+        getActivity().invalidateOptionsMenu();
+    }
+
+    public static enum TestDevice {Thumb, Cadence, Meter}
 }

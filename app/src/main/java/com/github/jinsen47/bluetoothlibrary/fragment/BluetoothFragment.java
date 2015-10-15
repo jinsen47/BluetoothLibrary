@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import com.github.jinsen47.bluetoothlibrary.R;
 import com.github.jinsen47.bluetoothlibrary.adapter.BriefAdapter;
+import com.github.jinsen47.bluetoothlibrary.model.CycleTestModel;
 import com.github.jinsen47.bluetoothlibrary.model.LogModel;
 import com.github.jinsen47.bluetoothlibrary.model.TimeModel;
 
@@ -51,6 +52,11 @@ public abstract class BluetoothFragment extends BaseFragment {
 
     protected void setLogData(LogModel data) {
         mAdapter.setLogData(data);
+        mAdapter.notifyDataSetChanged();
+    }
+
+    protected void setCycleTestData(CycleTestModel data) {
+        mAdapter.setCycleTestModel(data);
         mAdapter.notifyDataSetChanged();
     }
 

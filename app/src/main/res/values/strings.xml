@@ -22,4 +22,12 @@
     <string name="status_disconnect">Disconnected</string>
     <string name="status_fail">Failed</string>
     <string name="action_disconnect">Disconnect</string>
+
+    <string name="test_times">Finished times:</string>
+
+    <string name="cycle_test_times">Finished times: %d</string>
+    <string name="cycle_test_fail_times">Fail times: %d</string>
+    <string name="cycle_test_connect_success_rate">Connection Success Rate: %d</string>
+    <string name="cycle_test_notify_success_rate">Notify Success Rate: %d</string>
+
 </resources>
