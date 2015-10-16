@@ -26,4 +26,8 @@
     <string name="cycle_test_fail_times">失败次数: %d</string>
     <string name="cycle_test_notify_success_rate">通知成功率: %d</string>
     <string name="cycle_test_times">已完成次数: %d</string>
+    <string name="log_api_int">API:</string>
+    <string name="log_hardware">硬件厂商:</string>
+    <string name="log_manufacture">生产厂商:</string>
+    <string name="log_system_version">系统版本:</string>
 </resources>

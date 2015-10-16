@@ -13,6 +13,7 @@ import android.view.MenuItem;
 
 import com.github.jinsen47.bluetoothlibrary.R;
 import com.github.jinsen47.bluetoothlibrary.adapter.MainPagerAdapter;
+import com.github.jinsen47.bluetoothlibrary.util.DeviceInfoUtils;
 
 public class MainActivity extends AppCompatActivity {
     private TabLayout layoutTab;
@@ -41,6 +42,9 @@ public class MainActivity extends AppCompatActivity {
         mPager.setAdapter(mAdapter);
         layoutTab.setTabsFromPagerAdapter(mAdapter);
         layoutTab.setupWithViewPager(mPager);
+
+        // Init DeviceInfoUtil
+        DeviceInfoUtils.setContext(this);
     }
 
     private void setListeners() {

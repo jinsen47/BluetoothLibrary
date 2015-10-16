@@ -30,4 +30,9 @@
     <string name="cycle_test_connect_success_rate">Connection Success Rate: %d</string>
     <string name="cycle_test_notify_success_rate">Notify Success Rate: %d</string>
 
+    <string name="log_manufacture">Manufacture:</string>
+    <string name="log_hardware">Hardware:</string>
+    <string name="log_system_version">System version:</string>
+    <string name="log_api_int">API:</string>
+
 </resources>

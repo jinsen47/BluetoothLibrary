@@ -17,6 +17,7 @@ import com.github.jinsen47.bluetoothlibrary.model.CycleTestModel;
 import com.github.jinsen47.bluetoothlibrary.model.LogModel;
 import com.github.jinsen47.bluetoothlibrary.model.TimeModel;
 import com.github.jinsen47.bluetoothlibrary.util.BluetoothDeviceUtil;
+import com.github.jinsen47.bluetoothlibrary.util.DeviceInfoUtils;
 import com.litesuits.bluetooth.LiteBluetooth;
 import com.litesuits.bluetooth.conn.ConnectError;
 import com.litesuits.bluetooth.conn.ConnectListener;
@@ -211,8 +212,7 @@ public class LiteBluetoothFragment extends BluetoothFragment {
         setTimeData(mTimeData);
         setLogData(mLogData);
         setCycleTestData(mCycleTestData);
-//        LogcatUtil logcat = new LogcatUtil(mLogData.getLog());
-//        logcat.start();
+        setDeviceInfo(mLogData.getLog());
     }
 
     @Override
@@ -301,6 +301,13 @@ public class LiteBluetoothFragment extends BluetoothFragment {
     private void stopCycleTest() {
         isTesting = false;
         getActivity().invalidateOptionsMenu();
+    }
+
+    private void setDeviceInfo(StringBuffer sb) {
+        sb.append(getString(R.string.log_manufacture) + DeviceInfoUtils.getManufacture() + "\n");
+        sb.append(getString(R.string.log_hardware) + DeviceInfoUtils.getHardware() + "\n");
+        sb.append(getString(R.string.log_system_version) + DeviceInfoUtils.getSystemAPIVersion() + "\n");
+        sb.append(getString(R.string.log_api_int) + DeviceInfoUtils.getSystemAPIVersion() + "\n");
     }
 
     public static enum TestDevice {Thumb, Cadence, Meter}

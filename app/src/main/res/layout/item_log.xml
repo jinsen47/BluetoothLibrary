@@ -25,23 +25,17 @@
             android:layout_height="wrap_content"
             android:textAppearance="@style/AppTheme.Body1"
             android:layout_marginLeft="@dimen/margin_mini"
-            android:layout_marginTop="@dimen/margin_small"
             android:paddingTop="@dimen/margin_wee"
             android:paddingBottom="@dimen/margin_wee"
             />
-        <android.support.v4.widget.NestedScrollView
-            android:id="@+id/scroll_log"
+        <TextView
+            android:id="@+id/tv_log"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <TextView
-                android:id="@+id/tv_log"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="@style/AppTheme.Body1"
-                android:layout_marginLeft="@dimen/margin_mini"
-                android:paddingTop="@dimen/margin_wee"
-                android:paddingBottom="@dimen/margin_wee"/>
-        </android.support.v4.widget.NestedScrollView>
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/AppTheme.Body1"
+            android:layout_marginLeft="@dimen/margin_mini"
+            android:paddingTop="@dimen/margin_wee"
+            android:paddingBottom="@dimen/margin_wee"/>
 
     </LinearLayout>
 </android.support.v7.widget.CardView>
