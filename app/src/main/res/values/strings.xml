@@ -34,5 +34,11 @@
     <string name="log_hardware">Hardware:</string>
     <string name="log_system_version">System version:</string>
     <string name="log_api_int">API:</string>
+    
+    <string name="params_advertising_interval">Advertising Interval(ms)</string>
+    <string name="params_connect_interval_min">Connection Interval Min(ms)</string>
+    <string name="params_connect_interval_max">Connection Interval Max(ms)</string>
+    <string name="params_connect_timeout">Connection Timeout</string>
+    <string name="params_commit">Launch!</string>
 
 </resources>

@@ -60,6 +60,10 @@ public abstract class BluetoothFragment extends BaseFragment {
         mAdapter.notifyDataSetChanged();
     }
 
+    protected void setLaunchClickListener(BriefAdapter.OnLaunchClickListener listener) {
+        mAdapter.setOnLaunchClickListener(listener);
+    }
+
     protected void notifyDatasetChanged() {
         mAdapter.notifyDataSetChanged();
     }

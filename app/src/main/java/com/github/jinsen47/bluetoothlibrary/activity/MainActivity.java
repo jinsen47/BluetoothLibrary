@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
     private TabLayout layoutTab;
     private ViewPager mPager;
     private MainPagerAdapter mAdapter;
-    private FloatingActionButton fab;
+//    private FloatingActionButton fab;
     private Toolbar mToolbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(mToolbar);
         layoutTab = ((TabLayout) findViewById(R.id.tab_main));
         mPager = ((ViewPager) findViewById(R.id.pager_main));
-        fab = (FloatingActionButton) findViewById(R.id.fab);
+//        fab = (FloatingActionButton) findViewById(R.id.fab);
     }
     private void initData() {
         mAdapter = new MainPagerAdapter(getSupportFragmentManager(), this);
@@ -48,13 +48,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setListeners() {
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+//            }
+//        });
     }
 
 }

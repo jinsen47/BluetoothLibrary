@@ -13,6 +13,7 @@ import com.litesuits.bluetooth.scan.PeriodMacScanCallback;
 import com.litesuits.bluetooth.scan.PeriodScanCallback;
 import com.litesuits.bluetooth.utils.BluetoothUtil;
 import com.litesuits.bluetooth.utils.HandlerUtil;
+import com.litesuits.bluetooth.utils.HexUtil;
 
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;

@@ -11,8 +11,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.github.jinsen47.bluetoothlibrary.R;
+import com.github.jinsen47.bluetoothlibrary.adapter.BriefAdapter;
 import com.github.jinsen47.bluetoothlibrary.model.CycleTestModel;
 import com.github.jinsen47.bluetoothlibrary.model.LogModel;
 import com.github.jinsen47.bluetoothlibrary.model.TimeModel;
@@ -22,10 +24,13 @@ import com.litesuits.bluetooth.LiteBluetooth;
 import com.litesuits.bluetooth.conn.ConnectError;
 import com.litesuits.bluetooth.conn.ConnectListener;
 import com.litesuits.bluetooth.conn.ConnectState;
+import com.litesuits.bluetooth.conn.TimeoutCallback;
 import com.litesuits.bluetooth.scan.PeriodScanCallback;
 import com.litesuits.bluetooth.utils.HandlerUtil;
 import com.litesuits.bluetooth.utils.HexUtil;
 
+import java.nio.ByteBuffer;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -35,10 +40,17 @@ public class LiteBluetoothFragment extends BluetoothFragment {
     private static final String TAG = LiteBluetoothFragment.class.getSimpleName();
     private static final long TIME_OUT = 5000;
     private long SCAN_INTERVAL = 5000;
+    private static final String DEVICE_MAC = "B0:B4:48:DB:08:54";
+
+    private static final int CHANGE_MIN_INTERVAL = 0x05;
+    private static final int CHANGE_MAX_INTERVAL = 0x06;
+    private static final int CHANGE_ADV_INTERVAL = 0x09;
+    private static final int CHANGE_COON_TIMEOUT = 0x08;
 
     private LiteBluetooth mLiteBluetooth;
     private PeriodScanCallback mScanCallback;
     private ConnectListener mConnectListener;
+    private BriefAdapter.OnLaunchClickListener mLaunchClickListener;
 
     private TimeModel mTimeData = new TimeModel();
     private LogModel mLogData = new LogModel();
@@ -46,12 +58,14 @@ public class LiteBluetoothFragment extends BluetoothFragment {
 
     private TestDevice device;
 
-    private String connectingMac;
+    private String connectingMac = DEVICE_MAC;
     private boolean isTesting = false;
 
 
     private final UUID service_uuid = UUID.fromString("0000fff0-0000-1000-8000-00805f9b34fb");
-    private final UUID characteristic_uuid = UUID.fromString("0000fff1-0000-1000-8000-00805f9b34fb");
+    private final UUID notify_characteristic_uuid = UUID.fromString("0000fff1-0000-1000-8000-00805f9b34fb");
+    private final UUID command_characteristic_uuid = UUID.fromString("0000fff3-0000-1000-8000-00805f9b34fb");
+    private final UUID data_characteristic_uuid = UUID.fromString("0000fff4-0000-1000-8000-00805f9b34fb");
     public static final UUID DESC_CCC = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb");
 
     @Override
@@ -175,7 +189,7 @@ public class LiteBluetoothFragment extends BluetoothFragment {
                 BluetoothGattService service = gatt.getService(service_uuid);
                 if (service != null) {
                     Log.d(TAG, "Enable Notifiy!");
-                    BluetoothGattCharacteristic characteristic = getBluetoothGatt().getService(service_uuid).getCharacteristic(characteristic_uuid);
+                    BluetoothGattCharacteristic characteristic = getBluetoothGatt().getService(service_uuid).getCharacteristic(notify_characteristic_uuid);
                     BluetoothGattDescriptor descriptor = characteristic.getDescriptor(DESC_CCC);
                     enableCharacteristicNotification(getBluetoothGatt(), characteristic, descriptor.getUuid().toString());
                     stopCurrentTest(true);
@@ -213,6 +227,58 @@ public class LiteBluetoothFragment extends BluetoothFragment {
         setLogData(mLogData);
         setCycleTestData(mCycleTestData);
         setDeviceInfo(mLogData.getLog());
+
+        mLaunchClickListener = new BriefAdapter.OnLaunchClickListener() {
+            @Override
+            public void onClick(View v, String ad, String connMin, String connMax, String timeout) {
+//                int adTime = Integer.parseInt(ad.trim());
+                int connMinTime = Integer.parseInt(connMin.trim());
+//                int connMaxTime = Integer.parseInt(connMax.trim());
+//                int timeoutTime = Integer.parseInt(timeout.trim());
+
+                if (connMinTime != 0) {
+                    mConnectListener.characteristicWrite(mConnectListener.getBluetoothGatt(),
+                            service_uuid.toString(),
+                            data_characteristic_uuid.toString(),
+                            getCharacteristicWriteByteArray(connMinTime),
+                            new TimeoutCallback() {
+                        @Override
+                        public void onTimeout(BluetoothGatt gatt) {
+                            Log.d(TAG, "write connMin data timeout");
+                        }
+                    });
+                    mConnectListener.characteristicWrite(mConnectListener.getBluetoothGatt(),
+                            service_uuid.toString(),
+                            command_characteristic_uuid.toString(),
+                            getCommandByteArray(CHANGE_MIN_INTERVAL),
+                            new TimeoutCallback() {
+                                @Override
+                                public void onTimeout(BluetoothGatt gatt) {
+                                    Log.d(TAG, "write connMin command timeout");
+                                }
+                            });
+                }
+            }
+        };
+        setLaunchClickListener(mLaunchClickListener);
+
+    }
+
+    private byte[] getCharacteristicWriteByteArray(int data) {
+        // Designed by our hardware, characteristic
+        byte[] inputData;
+        if (data < 0xFF) {
+            inputData = ByteBuffer.allocate(6).put(0, ((byte) data)).array();
+        } else {
+            inputData = ByteBuffer.allocate(6).putInt(data, 4).array();
+        }
+        return inputData;
+    }
+
+    private byte[] getCommandByteArray(int data) {
+        byte[] ret;
+        ret = ByteBuffer.allocate(1).put(0, ((byte)data)).array();
+        return ret;
     }
 
     @Override
@@ -259,6 +325,7 @@ public class LiteBluetoothFragment extends BluetoothFragment {
             case R.id.action_disconnect:
                 mLiteBluetooth.closeAllConnects();
                 setStatusTitle("");
+                connectingMac = DEVICE_MAC;
             default:
                 break;
         }
@@ -302,6 +369,8 @@ public class LiteBluetoothFragment extends BluetoothFragment {
         isTesting = false;
         getActivity().invalidateOptionsMenu();
     }
+
+//    private void writeParam()
 
     private void setDeviceInfo(StringBuffer sb) {
         sb.append(getString(R.string.log_manufacture) + DeviceInfoUtils.getManufacture() + "\n");

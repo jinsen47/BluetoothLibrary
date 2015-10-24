@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:paddingBottom="@dimen/margin_small"
+    xmlns:cardview="http://schemas.android.com/apk/res-auto"
+    cardview:cardCornerRadius="4dp"
+    android:layout_marginBottom="@dimen/margin_wee"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <android.support.percent.PercentRelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_widthPercent="70%"
+            android:orientation="vertical"
+            android:layout_alignParentLeft="true"
+            android:paddingLeft="@dimen/margin_small">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/params_advertising_interval"
+                android:paddingTop="@dimen/margin_mini"
+                android:paddingBottom="@dimen/margin_wee" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/params_connect_interval_min"
+                android:paddingTop="@dimen/margin_mini"
+                android:paddingBottom="@dimen/margin_wee" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/params_connect_interval_max"
+                android:paddingTop="@dimen/margin_mini"
+                android:paddingBottom="@dimen/margin_wee" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/params_connect_timeout"
+                android:paddingTop="@dimen/margin_mini"
+                android:paddingBottom="@dimen/margin_wee" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_edit"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_widthPercent="20%"
+            android:orientation="vertical"
+            android:layout_alignParentRight="true"
+            android:paddingRight="@dimen/margin_small">
+            <EditText
+                android:id="@+id/edit_ad"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:paddingTop="@dimen/margin_wee"
+                android:paddingBottom="@dimen/margin_wee" />
+            <EditText
+                android:id="@+id/edit_connection_min"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:paddingTop="@dimen/margin_wee"
+                android:paddingBottom="@dimen/margin_wee" />
+            <EditText
+                android:id="@+id/edit_connection_max"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:paddingTop="@dimen/margin_wee"
+                android:paddingBottom="@dimen/margin_wee" />
+            <EditText
+                android:id="@+id/edit_connection_timeout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:paddingTop="@dimen/margin_wee"
+                android:paddingBottom="@dimen/margin_wee" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_launch"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_widthPercent="50%"
+            android:layout_below="@id/layout_edit"
+            android:text="@string/params_commit"
+            android:layout_centerHorizontal="true"/>
+
+
+    </android.support.percent.PercentRelativeLayout>
+
+</android.support.v7.widget.CardView>

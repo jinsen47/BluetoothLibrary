@@ -6,8 +6,11 @@
     <TextView
         android:id="@+id/tv_status"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/margin_mini"
+        android:layout_marginBottom="@dimen/margin_mini"
         android:paddingLeft="@dimen/margin_small"
+        android:paddingRight="@dimen/margin_small"
         android:gravity="center_vertical"
         tools:text="Connecting"
         android:textAppearance="@style/AppTheme.Subhead" />

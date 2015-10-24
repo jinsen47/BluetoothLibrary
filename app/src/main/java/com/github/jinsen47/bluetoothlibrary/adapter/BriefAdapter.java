@@ -6,6 +6,8 @@ import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.github.jinsen47.bluetoothlibrary.R;
@@ -17,18 +19,23 @@ import com.github.jinsen47.bluetoothlibrary.model.TimeModel;
  * Created by Jinsen on 15/9/25.
  */
 public class BriefAdapter extends RecyclerView.Adapter{
-    public enum Mode {Time, CycleTest, Log}
+    public enum Mode {Time, CycleTest, Params, Log}
 
     private final Context mContext;
     private TimeModel timeData;
     private LogModel logData;
     private CycleTestModel cycleTestModel;
+    private OnLaunchClickListener mListener;
 
     public BriefAdapter(Context mContext) {
         this.mContext = mContext;
         timeData = new TimeModel();
         logData = new LogModel();
         cycleTestModel = new CycleTestModel();
+    }
+
+    public void setOnLaunchClickListener(OnLaunchClickListener mListener) {
+        this.mListener = mListener;
     }
 
     public TimeModel getTimeData() {
@@ -72,6 +79,11 @@ public class BriefAdapter extends RecyclerView.Adapter{
             return new LogHolder(v);
         }
 
+        if (viewType == Mode.Params.ordinal()) {
+            View v = LayoutInflater.from(mContext).inflate(R.layout.item_prams, parent, false);
+            return new ParamsHolder(v);
+        }
+
         return null;
     }
 
@@ -98,6 +110,11 @@ public class BriefAdapter extends RecyclerView.Adapter{
             LogHolder logHolder = ((LogHolder) holder);
             logHolder.tvMac.setText(logData.getMac());
             logHolder.tvLog.setText(logData.getLog().toString());
+        }
+
+        if (position == Mode.Params.ordinal()) {
+            ParamsHolder paramsHolder = ((ParamsHolder) holder);
+            paramsHolder.setLaunchClickListener(mListener);
         }
     }
 
@@ -153,5 +170,45 @@ public class BriefAdapter extends RecyclerView.Adapter{
             tvMac = ((TextView) itemView.findViewById(R.id.tv_mac));
             tvLog = ((TextView) itemView.findViewById(R.id.tv_log));
         }
+    }
+
+    public class ParamsHolder extends RecyclerView.ViewHolder {
+        public EditText editAd;
+        public EditText editConnMin;
+        public EditText editConnMax;
+        public EditText editTimeout;
+        public Button btnLaunch;
+        public OnLaunchClickListener mListener;
+
+
+        public ParamsHolder(View itemView) {
+            super(itemView);
+            editAd = ((EditText) itemView.findViewById(R.id.edit_ad));
+            editConnMin = ((EditText) itemView.findViewById(R.id.edit_connection_min));
+            editConnMax = ((EditText) itemView.findViewById(R.id.edit_connection_max));
+            editTimeout = ((EditText) itemView.findViewById(R.id.edit_connection_timeout));
+            btnLaunch = ((Button) itemView.findViewById(R.id.btn_launch));
+
+            btnLaunch.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mListener != null) {
+                        mListener.onClick(v,
+                                editAd.getText().toString(),
+                                editConnMin.getText().toString(),
+                                editConnMax.getText().toString(),
+                                editTimeout.getText().toString());
+                    }
+                }
+            });
+        }
+
+        public void setLaunchClickListener(OnLaunchClickListener listener) {
+            this.mListener = listener;
+        }
+    }
+
+    public interface OnLaunchClickListener {
+        void onClick(View v, String ad, String connMin, String connMax, String timeout);
     }
 }
