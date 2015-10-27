@@ -48,6 +48,8 @@ public abstract class ConnectListener extends BluetoothHelper {
 
     public abstract void onServicesDiscovered(BluetoothGatt gatt);
 
+    public abstract void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status);
+
     public abstract void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status);
 
     public abstract void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic);
