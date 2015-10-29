@@ -48,8 +48,6 @@ public abstract class LiteBluetoothGatCallback extends BluetoothGattCallback {
 
     public abstract void onServicesDiscoveSuccess(BluetoothGatt gatt);
 
-//    public abstract void onCharacteristicRead(BluetoothGattCharacteristic characteristic, int status);
-
     public abstract void onServicesDiscoverTimeout(BluetoothGatt gatt, int status);
 
     public abstract void onOtherTimeout(BluetoothGatt gatt, String msg);
@@ -113,19 +111,23 @@ public abstract class LiteBluetoothGatCallback extends BluetoothGattCallback {
         }
     }
 
-    @Override
-    public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
-        super.onCharacteristicRead(gatt, characteristic, status);
-        if (BleLog.isPrint) {
-            BleLog.v(TAG, "onCharacteristicRead  status: " + status +
-                    " ,characteristic : " + characteristic.getUuid() +
-                    " ,characteristic : " + HexUtil.encodeHexStr(characteristic.getValue()) +
-                    " ,thread: " + Thread.currentThread().getId());
-        }
-//        if (status == BluetoothGatt.GATT_SUCCESS) {
-//            onCharacteristicRead(characteristic, status);
+//    @Override
+//    public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+////        super.onCharacteristicRead(gatt, characteristic, status);
+//        if (BleLog.isPrint) {
+//            BleLog.v(TAG, "onCharacteristicRead  status: " + status +
+//                    " ,characteristic : " + characteristic.getUuid() +
+//                    " ,characteristic : " + HexUtil.encodeHexStr(characteristic.getValue()) +
+//                    " ,thread: " + Thread.currentThread().getId());
 //        }
-    }
+//        BleLog.v(TAG, "onCharacteristicRead  status: " + status +
+//                " ,characteristic : " + characteristic.getUuid() +
+//                " ,characteristic : " + HexUtil.encodeHexStr(characteristic.getValue()) +
+//                " ,thread: " + Thread.currentThread().getId());
+////        if (status == BluetoothGatt.GATT_SUCCESS) {
+////            onCharacteristicRead(characteristic, status);
+////        }
+//    }
 
     @Override
     public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {

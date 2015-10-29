@@ -137,14 +137,8 @@ public class LiteBluetooth {
                                 listener.onServicesDiscovered(gatt);
                             }
 
-//                            @Override
-//                            public void onCharacteristicRead(BluetoothGattCharacteristic characteristic, int status) {
-//                                listener.onCharacteristicRead(characteristic, status);
-//                            }
-
                             @Override
                             public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
-                                super.onCharacteristicRead(gatt, characteristic, status);
                                 listener.onCharacteristicRead(gatt, characteristic, status);
                             }
 

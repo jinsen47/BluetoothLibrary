@@ -65,6 +65,7 @@ public class LiteBluetoothFragment extends BluetoothFragment {
     @Override
     protected void initBluetooth() {
         mLiteBluetooth = new LiteBluetooth(getActivity());
+        mLiteBluetooth.enableBluetooth();
         mScanCallback = new PeriodScanCallback(TIME_OUT, BluetoothAdapter.getDefaultAdapter()) {
             @Override
             public void onScanTimeout() {
@@ -179,10 +180,10 @@ public class LiteBluetoothFragment extends BluetoothFragment {
                 mTimeData.setServiceStopTime(System.currentTimeMillis());
                 BluetoothGattService service = gatt.getService(BluetoothDeviceUtil.service_uuid);
                 if (service != null) {
-                    Log.d(TAG, "Enable Notifiy!");
-                    BluetoothGattCharacteristic characteristic = getBluetoothGatt().getService(BluetoothDeviceUtil.service_uuid).getCharacteristic(BluetoothDeviceUtil.notify_characteristic_uuid);
-                    BluetoothGattDescriptor descriptor = characteristic.getDescriptor(BluetoothDeviceUtil.DESC_CCC);
-                    enableCharacteristicNotification(getBluetoothGatt(), characteristic, descriptor.getUuid().toString());
+//                    Log.d(TAG, "Enable Notifiy!");
+//                    BluetoothGattCharacteristic characteristic = getBluetoothGatt().getService(BluetoothDeviceUtil.service_uuid).getCharacteristic(BluetoothDeviceUtil.notify_characteristic_uuid);
+//                    BluetoothGattDescriptor descriptor = characteristic.getDescriptor(BluetoothDeviceUtil.DESC_CCC);
+//                    enableCharacteristicNotification(getBluetoothGatt(), characteristic, descriptor.getUuid().toString());
                 } else {
                     mTimeData.setFailMessage("没有所需service");
                     mTimeData.setIsNotifyPassed(false);
@@ -192,8 +193,8 @@ public class LiteBluetoothFragment extends BluetoothFragment {
 
             @Override
             public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
-                Log.d(TAG, "onCharacteristicRead" + HexUtil.encodeHexStr(characteristic.getValue()));
-                if (characteristic.getUuid().equals(BluetoothDeviceUtil.inf_caaracteristic_uuid)) {
+                Log.i(TAG, "onCharacteristicRead" + HexUtil.encodeHexStr(characteristic.getValue()));
+                if (characteristic.getUuid().equals(BluetoothDeviceUtil.inf_characteristic_uuid)) {
                     Toast.makeText(getActivity(), "操作成功", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -208,9 +209,10 @@ public class LiteBluetoothFragment extends BluetoothFragment {
                 }
 
                 if (mCommandStatus == DeviceCommandStatus.WRITE_COMMAND) {
-                    getBluetoothGatt().readCharacteristic(getCharacteristic(getBluetoothGatt(),
-                            BluetoothDeviceUtil.service_uuid.toString(),
-                            BluetoothDeviceUtil.inf_caaracteristic_uuid.toString()));
+                    BluetoothGattCharacteristic c = getCharacteristic(getBluetoothGatt(), BluetoothDeviceUtil.service_uuid.toString(),
+                            BluetoothDeviceUtil.inf_characteristic_uuid.toString());
+                    boolean ret = getBluetoothGatt().readCharacteristic(c);
+                    Log.d(TAG, "info " + (ret ? "true" : "false"));
                     mCommandStatus = DeviceCommandStatus.READ_INFO;
                 }
             }
@@ -219,8 +221,8 @@ public class LiteBluetoothFragment extends BluetoothFragment {
             @Override
             public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
                 String address = gatt.getDevice().getAddress();
-                Log.d(TAG, "onCharacteristicChanged " + address);
-                Log.d(TAG, HexUtil.encodeHexStr(characteristic.getValue()));
+//                Log.d(TAG, "onCharacteristicChanged " + address);
+//                Log.d(TAG, HexUtil.encodeHexStr(characteristic.getValue()));
             }
 
             @Override
@@ -255,6 +257,10 @@ public class LiteBluetoothFragment extends BluetoothFragment {
                     writeDataToDevice();
                     mCommandStatus = DeviceCommandStatus.WRITE_DATA;
                 }
+                BluetoothGattCharacteristic c = mConnectListener.getCharacteristic(mConnectListener.getBluetoothGatt(), BluetoothDeviceUtil.service_uuid.toString(),
+                        BluetoothDeviceUtil.battery_characteristic_uuid.toString());
+                boolean ret = mConnectListener.getBluetoothGatt().readCharacteristic(c);
+                Log.i(TAG, "battery level " + (ret ? "true" : "false"));
             }
         };
         setLaunchClickListener(mLaunchClickListener);

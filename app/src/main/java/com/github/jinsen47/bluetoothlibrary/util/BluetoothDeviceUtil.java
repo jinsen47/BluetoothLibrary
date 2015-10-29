@@ -9,9 +9,10 @@ import java.util.UUID;
 public class BluetoothDeviceUtil {
     public static final UUID service_uuid = UUID.fromString("0000fff0-0000-1000-8000-00805f9b34fb");
     public static final UUID notify_characteristic_uuid = UUID.fromString("0000fff1-0000-1000-8000-00805f9b34fb");
+    public static final UUID battery_characteristic_uuid = UUID.fromString("0000fff2-0000-1000-8000-00805f9b34fb");
     public static final UUID command_characteristic_uuid = UUID.fromString("0000fff3-0000-1000-8000-00805f9b34fb");
     public static final UUID data_characteristic_uuid = UUID.fromString("0000fff4-0000-1000-8000-00805f9b34fb");
-    public static final UUID inf_caaracteristic_uuid = UUID.fromString("0000fff5-0000-1000-8000-00805f9b34fb");
+    public static final UUID inf_characteristic_uuid = UUID.fromString("0000fff5-0000-1000-8000-00805f9b34fb");
     public static final UUID DESC_CCC = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb");
 
     public static final int CHANGE_MIN_INTERVAL = 0x05;
