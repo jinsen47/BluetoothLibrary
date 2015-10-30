@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 import com.github.jinsen47.bluetoothlibrary.R;
 import com.github.jinsen47.bluetoothlibrary.fragment.BluetoothFragment;
+import com.github.jinsen47.bluetoothlibrary.fragment.GizwitsFragment;
 import com.github.jinsen47.bluetoothlibrary.fragment.LiteBluetoothFragment;
 
 /**
@@ -34,7 +35,7 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
                 break;
             case 1:
                 // TODO smart bluetooth
-                fragment = new LiteBluetoothFragment();
+                fragment = new GizwitsFragment();
                 break;
             default:
                 fragment = new LiteBluetoothFragment();

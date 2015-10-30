@@ -53,7 +53,7 @@ public class LiteBluetoothFragment extends BluetoothFragment {
     private TimeModel mTimeData = new TimeModel();
     private LogModel mLogData = new LogModel();
 
-    private TestDevice device;
+    private BluetoothDeviceUtil.TestDevice device;
 
     private String connectingMac = DEVICE_MAC;
     private boolean isTesting = false;
@@ -307,16 +307,16 @@ public class LiteBluetoothFragment extends BluetoothFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_search_thumb:
+                device = BluetoothDeviceUtil.TestDevice.Thumb;
                 searchDevice();
-                device = TestDevice.Thumb;
                 break;
             case R.id.action_search_cadence:
+                device = BluetoothDeviceUtil.TestDevice.Cadence;
                 searchDevice();
-                device = TestDevice.Cadence;
                 break;
             case R.id.action_search_meter:
+                device = BluetoothDeviceUtil.TestDevice.Meter;
                 searchDevice();
-                device = TestDevice.Meter;
                 break;
             case R.id.action_disconnect:
                 mLiteBluetooth.closeAllConnects();
@@ -345,7 +345,6 @@ public class LiteBluetoothFragment extends BluetoothFragment {
         sb.append(getString(R.string.log_api_int) + DeviceInfoUtils.getSystemAPIVersion() + "\n");
     }
 
-    public static enum TestDevice {Thumb, Cadence, Meter}
 
     public enum DeviceCommandStatus {
         STAND_BY,

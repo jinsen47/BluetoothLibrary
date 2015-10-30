@@ -20,6 +20,8 @@ public class BluetoothDeviceUtil {
     public static final int CHANGE_ADV_INTERVAL = 0x09;
     public static final int CHANGE_COON_TIMEOUT = 0x08;
 
+    public enum TestDevice {Thumb, Cadence, Meter}
+
 
     public static boolean isThumb(byte[] scanRecord) {
         if((scanRecord[8]==17 && scanRecord[9]==18 && scanRecord[10]==3)
