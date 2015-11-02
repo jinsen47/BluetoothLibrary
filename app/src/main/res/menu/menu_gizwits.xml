@@ -4,4 +4,5 @@
     <item android:id="@+id/action_search_cadence" android:title="@string/action_search_cadence"/>
     <item android:id="@+id/action_search_meter" android:title="@string/action_search_meter"/>
     <item android:id="@+id/action_disconnect" android:title="@string/action_disconnect"/>
+    <item android:id="@+id/action_reset" android:title="@string/action_reset"/>
 </menu>

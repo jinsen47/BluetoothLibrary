@@ -1,6 +1,7 @@
 package com.github.jinsen47.bluetoothlibrary.fragment;
 
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -14,13 +15,17 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.github.jinsen47.bluetoothlibrary.R;
+import com.github.jinsen47.bluetoothlibrary.adapter.BriefAdapter;
 import com.github.jinsen47.bluetoothlibrary.model.LogModel;
 import com.github.jinsen47.bluetoothlibrary.model.TimeModel;
 import com.github.jinsen47.bluetoothlibrary.util.BluetoothDeviceUtil;
 import com.github.jinsen47.bluetoothlibrary.util.DeviceInfoUtils;
+import com.litesuits.bluetooth.utils.HexUtil;
+import com.xtremeprog.sdk.ble.BleGattCharacteristic;
 import com.xtremeprog.sdk.ble.BleGattService;
 import com.xtremeprog.sdk.ble.BleService;
 import com.xtremeprog.sdk.ble.IBle;
@@ -41,6 +46,8 @@ public class GizwitsFragment extends BluetoothFragment {
 
     private TimeModel mTimeData = new TimeModel();
     private LogModel mLogData = new LogModel();
+
+    private BriefAdapter.OnLaunchClickListener mLaunchClickListener;
 
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
@@ -67,6 +74,52 @@ public class GizwitsFragment extends BluetoothFragment {
         setTimeData(mTimeData);
         setLogData(mLogData);
         setDeviceInfo(mLogData.getLog());
+        mLaunchClickListener = new BriefAdapter.OnLaunchClickListener() {
+            @Override
+            public void onClick(View v, String ad, String connMin, String connMax, String timeout) {
+                int adTime = 0;
+                int connMinTime = 0;
+                int connMaxTime = 0;
+                int timeoutTime = 0;
+
+
+
+                if (!TextUtils.isEmpty(ad.trim())) adTime = Integer.parseInt(ad.trim());
+                if (!TextUtils.isEmpty(connMin.trim())) connMinTime = Integer.parseInt(connMin.trim());
+                if (!TextUtils.isEmpty(connMax.trim())) connMaxTime = Integer.parseInt(connMax.trim());
+                if (!TextUtils.isEmpty(timeout.trim())) timeoutTime = Integer.parseInt(timeout.trim());
+
+                if (adTime != 0) {
+                    changeCharacteristicFlow(adTime, BluetoothDeviceUtil.CHANGE_ADV_INTERVAL);
+                }
+
+                if (connMinTime != 0) {
+                    changeCharacteristicFlow(connMinTime, BluetoothDeviceUtil.CHANGE_MIN_INTERVAL);
+                }
+
+                if (connMaxTime != 0) {
+                    changeCharacteristicFlow(connMaxTime, BluetoothDeviceUtil.CHANGE_MAX_INTERVAL);
+                }
+
+                if (timeoutTime != 0) {
+                    changeCharacteristicFlow(timeoutTime, BluetoothDeviceUtil.CHANGE_COON_TIMEOUT);
+                }
+            }
+        };
+        setLaunchClickListener(mLaunchClickListener);
+    }
+
+    private void changeCharacteristicFlow(int data, int command) {
+        BleGattCharacteristic dataChar = mBle.getService(connectingMac, BluetoothDeviceUtil.service_uuid).getCharacteristic(BluetoothDeviceUtil.data_characteristic_uuid);
+        BleGattCharacteristic commandChar = mBle.getService(connectingMac, BluetoothDeviceUtil.service_uuid).getCharacteristic(BluetoothDeviceUtil.command_characteristic_uuid);
+        BleGattCharacteristic infChar = mBle.getService(connectingMac, BluetoothDeviceUtil.service_uuid).getCharacteristic(BluetoothDeviceUtil.inf_characteristic_uuid);
+
+        dataChar.setValue(BluetoothDeviceUtil.getCharacteristicWriteByteArray(data));
+        commandChar.setValue(BluetoothDeviceUtil.getCommandByteArray(command));
+        mBle.requestWriteCharacteristic(connectingMac, dataChar, "");
+        mBle.requestWriteCharacteristic(connectingMac, commandChar, "");
+        mBle.requestReadCharacteristic(connectingMac, infChar);
+
     }
 
     @Override
@@ -112,6 +165,11 @@ public class GizwitsFragment extends BluetoothFragment {
                 setStatusTitle("");
                 mBle.disconnect(connectingMac);
                 connectingMac = DEVICE_MAC;
+                break;
+            case R.id.action_reset:
+                if (getStatusTitle().equals(getString(R.string.status_connected))) {
+                    changeCharacteristicFlow(0, BluetoothDeviceUtil.DEVICE_RESET);
+                }
                 break;
             default:
                 break;
@@ -205,6 +263,16 @@ public class GizwitsFragment extends BluetoothFragment {
                     mTimeData.setFailMessage("没有所需service");
                     mTimeData.setIsNotifyPassed(false);
                 }
+            } else if (BleService.BLE_CHARACTERISTIC_WRITE.equals(intent.getAction())) {
+                // TODO onCharacteristicWrite
+            } else if (BleService.BLE_CHARACTERISTIC_READ.equals(intent.getAction())) {
+                // TODO onCharacteristicRead
+                byte[] val = intent.getExtras().getByteArray(BleService.EXTRA_VALUE);
+                Log.d(TAG, "inf read " + HexUtil.encodeHexStr(val));
+                if (HexUtil.encodeHexStr(val).equals("02")) {
+                    Toast.makeText(getActivity(), "操作成功!", Toast.LENGTH_SHORT).show();
+                }
+
             }
 
             getActivity().runOnUiThread(new Runnable() {

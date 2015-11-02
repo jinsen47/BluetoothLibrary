@@ -35,4 +35,5 @@
     <string name="params_connect_interval_min">连接最小间隔(ms)</string>
     <string name="params_connect_timeout">连接超时(ms)</string>
     <string name="params_commit">咻! 应用!</string>
+    <string name="action_reset">重置设备</string>
 </resources>

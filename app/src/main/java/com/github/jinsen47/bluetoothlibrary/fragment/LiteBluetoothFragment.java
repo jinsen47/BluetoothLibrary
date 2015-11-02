@@ -238,7 +238,7 @@ public class LiteBluetoothFragment extends BluetoothFragment {
         setLogData(mLogData);
         setDeviceInfo(mLogData.getLog());
 
-         mLaunchClickListener = new BriefAdapter.OnLaunchClickListener() {
+        mLaunchClickListener = new BriefAdapter.OnLaunchClickListener() {
             @Override
             public void onClick(View v, String ad, String connMin, String connMax, String timeout) {
                 int adTime = 0;

@@ -15,6 +15,7 @@ public class BluetoothDeviceUtil {
     public static final UUID inf_characteristic_uuid = UUID.fromString("0000fff5-0000-1000-8000-00805f9b34fb");
     public static final UUID DESC_CCC = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb");
 
+    public static final int DEVICE_RESET = 0x03;
     public static final int CHANGE_MIN_INTERVAL = 0x05;
     public static final int CHANGE_MAX_INTERVAL = 0x06;
     public static final int CHANGE_ADV_INTERVAL = 0x09;

@@ -15,6 +15,7 @@
     <string name="action_search_thumb">Search Thumb</string>
     <string name="action_search_cadence">Search Cadence</string>
     <string name="action_search_meter">Search Meter</string>
+    <string name="action_reset">Reset Device</string>
 
     <string name="status_searching">Searching...</string>
     <string name="status_connecting">Connecting...</string>

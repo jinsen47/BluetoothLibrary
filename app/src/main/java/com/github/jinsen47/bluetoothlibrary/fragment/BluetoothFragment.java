@@ -45,6 +45,10 @@ public abstract class BluetoothFragment extends BaseFragment {
         tvStatus.setText(resId);
     }
 
+    protected String getStatusTitle() {
+        return tvStatus.getText().toString();
+    }
+
     protected void setTimeData(TimeModel data) {
         mAdapter.setTimeData(data);
         mAdapter.notifyDataSetChanged();
