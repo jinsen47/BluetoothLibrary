@@ -18,13 +18,15 @@ import com.github.jinsen47.bluetoothlibrary.model.TimeModel;
 /**
  * Created by Jinsen on 15/9/25.
  */
-public class BriefAdapter extends RecyclerView.Adapter{
+public class BriefAdapter extends RecyclerView.Adapter implements View.OnClickListener{
     public enum Mode {Time, Log, Params}
 
     private final Context mContext;
     private TimeModel timeData;
     private LogModel logData;
     private OnLaunchClickListener mListener;
+
+    private int originalHeight;
 
     public BriefAdapter(Context mContext) {
         this.mContext = mContext;
@@ -56,16 +58,19 @@ public class BriefAdapter extends RecyclerView.Adapter{
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == Mode.Time.ordinal()) {
             View v = LayoutInflater.from(mContext).inflate(R.layout.item_time, parent, false);
+            setLayoutParamListener(v);
             return new TimeHolder(v);
         }
 
         if (viewType == Mode.Log.ordinal()) {
             View v = LayoutInflater.from(mContext).inflate(R.layout.item_log, parent, false);
+            setLayoutParamListener(v);
             return new LogHolder(v);
         }
 
         if (viewType == Mode.Params.ordinal()) {
             View v = LayoutInflater.from(mContext).inflate(R.layout.item_prams, parent, false);
+            setLayoutParamListener(v);
             return new ParamsHolder(v);
         }
 
@@ -170,5 +175,23 @@ public class BriefAdapter extends RecyclerView.Adapter{
 
     public interface OnLaunchClickListener {
         void onClick(View v, String ad, String connMin, String connMax, String timeout);
+    }
+
+    private void setLayoutParamListener(View v) {
+        v.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View v) {
+        ViewGroup.LayoutParams lp = v.getLayoutParams();
+        if (lp.height != ViewGroup.LayoutParams.WRAP_CONTENT) {
+            originalHeight = lp.height;
+            lp.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        } else if (originalHeight != 0){
+            lp.height = originalHeight;
+        } else {
+            // DO NOTHING
+        }
+        v.setLayoutParams(lp);
     }
 }

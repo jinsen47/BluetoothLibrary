@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import com.github.jinsen47.bluetoothlibrary.R;
 import com.github.jinsen47.bluetoothlibrary.adapter.BriefAdapter;
+import com.github.jinsen47.bluetoothlibrary.adapter.PileLayoutManager;
 import com.github.jinsen47.bluetoothlibrary.model.CycleTestModel;
 import com.github.jinsen47.bluetoothlibrary.model.LogModel;
 import com.github.jinsen47.bluetoothlibrary.model.TimeModel;
@@ -30,7 +31,10 @@ public abstract class BluetoothFragment extends BaseFragment {
         rvBluetooth = ((RecyclerView) rootView.findViewById(R.id.rv_bluetooth));
 
         mAdapter = new BriefAdapter(getContext());
-        rvBluetooth.setLayoutManager(new LinearLayoutManager(getContext()));
+        PileLayoutManager pileLayoutManager = new PileLayoutManager(getContext());
+        pileLayoutManager.setPileHeight(150);
+        rvBluetooth.setLayoutManager(pileLayoutManager);
+
         rvBluetooth.setAdapter(mAdapter);
         initBluetooth();
     }
