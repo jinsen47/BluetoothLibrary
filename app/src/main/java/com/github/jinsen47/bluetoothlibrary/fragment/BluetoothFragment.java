@@ -31,9 +31,10 @@ public abstract class BluetoothFragment extends BaseFragment {
         rvBluetooth = ((RecyclerView) rootView.findViewById(R.id.rv_bluetooth));
 
         mAdapter = new BriefAdapter(getContext());
-        PileLayoutManager pileLayoutManager = new PileLayoutManager(getContext());
-        pileLayoutManager.setPileHeight(150);
-        rvBluetooth.setLayoutManager(pileLayoutManager);
+//        PileLayoutManager pileLayoutManager = new PileLayoutManager(getContext());
+//        pileLayoutManager.setPileHeight(150);
+//        rvBluetooth.setLayoutManager(pileLayoutManager);
+        rvBluetooth.setLayoutManager(new LinearLayoutManager(getContext()));
 
         rvBluetooth.setAdapter(mAdapter);
         initBluetooth();

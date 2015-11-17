@@ -42,4 +42,10 @@
     <string name="params_connect_timeout">Connection Timeout</string>
     <string name="params_commit">Launch!</string>
 
+    <string name="off_host_title">Off Host Mode Test</string>
+    <string name="off_host_start">Start</string>
+    <string name="off_host_stop">Stop</string>
+    <string name="off_host_distance_title">Distance: </string>
+
+
 </resources>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="@dimen/margin_small"
+    xmlns:cardview="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    cardview:cardCornerRadius="4dp"
+    android:layout_marginBottom="@dimen/margin_wee">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/off_host_title"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/margin_wee"
+            style="@style/Base.TextAppearance.AppCompat.Subhead"/>
+        <LinearLayout
+            android:id="@+id/layout_data"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="@dimen/margin_wee"
+            android:paddingBottom="@dimen/margin_wee"
+            android:layout_marginTop="@dimen/margin_middle"
+            android:layout_centerHorizontal="true">
+            <TextView
+                android:id="@+id/text_distance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/TextAppearance.AppCompat.Body1"
+                tools:text="里程:1000m"/>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_start"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="@string/off_host_start"
+            android:layout_below="@id/layout_data"/>
+
+    </RelativeLayout>
+</android.support.v7.widget.CardView>

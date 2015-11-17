@@ -36,4 +36,8 @@
     <string name="params_connect_timeout">连接超时(ms)</string>
     <string name="params_commit">咻! 应用!</string>
     <string name="action_reset">重置设备</string>
+    <string name="off_host_start">开始</string>
+    <string name="off_host_stop">停止</string>
+    <string name="off_host_title">偷鸡模式测试</string>
+    <string name="off_host_distance_title">距离: </string>
 </resources>

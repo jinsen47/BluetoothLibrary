@@ -13,29 +13,36 @@ import android.widget.TextView;
 import com.github.jinsen47.bluetoothlibrary.R;
 import com.github.jinsen47.bluetoothlibrary.model.CycleTestModel;
 import com.github.jinsen47.bluetoothlibrary.model.LogModel;
+import com.github.jinsen47.bluetoothlibrary.model.OffHostModel;
 import com.github.jinsen47.bluetoothlibrary.model.TimeModel;
 
 /**
  * Created by Jinsen on 15/9/25.
  */
-public class BriefAdapter extends RecyclerView.Adapter implements View.OnClickListener{
-    public enum Mode {Time, Log, Params}
+public class BriefAdapter extends RecyclerView.Adapter{
+    public enum Mode {Time, Log, Params, OffHost}
 
     private final Context mContext;
     private TimeModel timeData;
     private LogModel logData;
-    private OnLaunchClickListener mListener;
+    private OffHostModel offHostData;
 
-    private int originalHeight;
+    private OnLaunchClickListener mListener;
+    private OnOffHostClickListener mOffHostListener;
 
     public BriefAdapter(Context mContext) {
         this.mContext = mContext;
         timeData = new TimeModel();
         logData = new LogModel();
+        offHostData = new OffHostModel();
     }
 
     public void setOnLaunchClickListener(OnLaunchClickListener mListener) {
         this.mListener = mListener;
+    }
+
+    public void setOnOffHostClickListener(OnOffHostClickListener listener) {
+        this.mOffHostListener = listener;
     }
 
     public TimeModel getTimeData() {
@@ -54,24 +61,37 @@ public class BriefAdapter extends RecyclerView.Adapter implements View.OnClickLi
         this.logData = logData;
     }
 
+    public OffHostModel getOffHostData() {
+        return offHostData;
+    }
+
+    public void setOffHostData(OffHostModel offHostData) {
+        this.offHostData = offHostData;
+    }
+
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == Mode.Time.ordinal()) {
             View v = LayoutInflater.from(mContext).inflate(R.layout.item_time, parent, false);
-            setLayoutParamListener(v);
+//            setLayoutParamListener(v);
             return new TimeHolder(v);
         }
 
         if (viewType == Mode.Log.ordinal()) {
             View v = LayoutInflater.from(mContext).inflate(R.layout.item_log, parent, false);
-            setLayoutParamListener(v);
+//            setLayoutParamListener(v);
             return new LogHolder(v);
         }
 
         if (viewType == Mode.Params.ordinal()) {
             View v = LayoutInflater.from(mContext).inflate(R.layout.item_prams, parent, false);
-            setLayoutParamListener(v);
+//            setLayoutParamListener(v);
             return new ParamsHolder(v);
+        }
+
+        if (viewType == Mode.OffHost.ordinal()) {
+            View v = LayoutInflater.from(mContext).inflate(R.layout.item_off_host, parent, false);
+            return new OffHostHolder(v);
         }
 
         return null;
@@ -96,6 +116,11 @@ public class BriefAdapter extends RecyclerView.Adapter implements View.OnClickLi
         if (position == Mode.Params.ordinal()) {
             ParamsHolder paramsHolder = ((ParamsHolder) holder);
             paramsHolder.setLaunchClickListener(mListener);
+        }
+
+        if (position == Mode.OffHost.ordinal()) {
+            OffHostHolder offHostHolder = ((OffHostHolder) holder);
+            offHostHolder.textDistance.setText(mContext.getText(R.string.off_host_distance_title) + offHostData.getDistance());
         }
     }
 
@@ -173,25 +198,48 @@ public class BriefAdapter extends RecyclerView.Adapter implements View.OnClickLi
         }
     }
 
+    public class OffHostHolder extends RecyclerView.ViewHolder {
+        Button btnStart;
+        TextView textDistance;
+
+        public OffHostHolder(View itemView) {
+            super(itemView);
+            btnStart = ((Button) itemView.findViewById(R.id.btn_start));
+            textDistance = ((TextView) itemView.findViewById(R.id.text_distance));
+            btnStart.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mOffHostListener != null) {
+                        mOffHostListener.onClick(v);
+                    }
+                }
+            });
+        }
+    }
+
     public interface OnLaunchClickListener {
         void onClick(View v, String ad, String connMin, String connMax, String timeout);
     }
 
-    private void setLayoutParamListener(View v) {
-        v.setOnClickListener(this);
+    public interface OnOffHostClickListener {
+        void onClick(View v);
     }
 
-    @Override
-    public void onClick(View v) {
-        ViewGroup.LayoutParams lp = v.getLayoutParams();
-        if (lp.height != ViewGroup.LayoutParams.WRAP_CONTENT) {
-            originalHeight = lp.height;
-            lp.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-        } else if (originalHeight != 0){
-            lp.height = originalHeight;
-        } else {
-            // DO NOTHING
-        }
-        v.setLayoutParams(lp);
-    }
+//    private void setLayoutParamListener(View v) {
+//        v.setOnClickListener(this);
+//    }
+
+//    @Override
+//    public void onClick(View v) {
+//        ViewGroup.LayoutParams lp = v.getLayoutParams();
+//        if (lp.height != ViewGroup.LayoutParams.WRAP_CONTENT) {
+//            originalHeight = lp.height;
+//            lp.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+//        } else if (originalHeight != 0){
+//            lp.height = originalHeight;
+//        } else {
+//            // DO NOTHING
+//        }
+//        v.setLayoutParams(lp);
+//    }
 }

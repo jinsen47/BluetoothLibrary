@@ -9,7 +9,7 @@
     <dimen name="margin_wee">8dp</dimen>
     <dimen name="margin_mini">12dp</dimen>
     <dimen name="margin_small">16dp</dimen>
-    <dimen name="margin_millde">32dp</dimen>
+    <dimen name="margin_middle">32dp</dimen>
     <dimen name="margin_large">48dp</dimen>
     <dimen name="margin_huge">56dp</dimen>
     <dimen name="margin_very_huge">72dp</dimen>
