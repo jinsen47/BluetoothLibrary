@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.github.jinsen47.bluetoothlibrary.R;
 import com.github.jinsen47.bluetoothlibrary.adapter.BriefAdapter;
 import com.github.jinsen47.bluetoothlibrary.model.LogModel;
+import com.github.jinsen47.bluetoothlibrary.model.OffHostModel;
 import com.github.jinsen47.bluetoothlibrary.model.TimeModel;
 import com.github.jinsen47.bluetoothlibrary.util.BluetoothDeviceUtil;
 import com.github.jinsen47.bluetoothlibrary.util.DeviceInfoUtils;
@@ -29,6 +30,8 @@ import com.xtremeprog.sdk.ble.BleGattCharacteristic;
 import com.xtremeprog.sdk.ble.BleGattService;
 import com.xtremeprog.sdk.ble.BleService;
 import com.xtremeprog.sdk.ble.IBle;
+
+import java.util.Arrays;
 
 /**
  * Created by Jinsen on 15/10/29.
@@ -41,13 +44,17 @@ public class GizwitsFragment extends BluetoothFragment {
 
     private BluetoothDeviceUtil.TestDevice device;
 
-    private static final String DEVICE_MAC = "B0:B4:48:DB:08:54";
+    private static final String DEVICE_MAC = "B0:B4:48:DB:08:F8";
     private String connectingMac = DEVICE_MAC;
 
     private TimeModel mTimeData = new TimeModel();
     private LogModel mLogData = new LogModel();
+    private OffHostModel mOffHostModel = new OffHostModel();
 
     private BriefAdapter.OnLaunchClickListener mLaunchClickListener;
+    private BriefAdapter.OnOffHostClickListener mOffHostClickListener;
+
+    private boolean isOffMode = false;
 
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
@@ -74,6 +81,7 @@ public class GizwitsFragment extends BluetoothFragment {
         setTimeData(mTimeData);
         setLogData(mLogData);
         setDeviceInfo(mLogData.getLog());
+        setOffHostData(mOffHostModel);
         mLaunchClickListener = new BriefAdapter.OnLaunchClickListener() {
             @Override
             public void onClick(View v, String ad, String connMin, String connMax, String timeout) {
@@ -81,9 +89,6 @@ public class GizwitsFragment extends BluetoothFragment {
                 int connMinTime = 0;
                 int connMaxTime = 0;
                 int timeoutTime = 0;
-
-
-
                 if (!TextUtils.isEmpty(ad.trim())) adTime = Integer.parseInt(ad.trim());
                 if (!TextUtils.isEmpty(connMin.trim())) connMinTime = Integer.parseInt(connMin.trim());
                 if (!TextUtils.isEmpty(connMax.trim())) connMaxTime = Integer.parseInt(connMax.trim());
@@ -107,6 +112,48 @@ public class GizwitsFragment extends BluetoothFragment {
             }
         };
         setLaunchClickListener(mLaunchClickListener);
+        mOffHostClickListener = new BriefAdapter.OnOffHostClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (device == null) {
+                    Toast.makeText(getActivity(), "请先连接设备", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                BleGattCharacteristic commandChar = mBle.getService(connectingMac, BluetoothDeviceUtil.service_uuid).getCharacteristic(BluetoothDeviceUtil.command_characteristic_uuid);
+                BleGattCharacteristic dataChar = mBle.getService(connectingMac, BluetoothDeviceUtil.service_uuid).getCharacteristic(BluetoothDeviceUtil.data_characteristic_uuid);
+                if (!isOffMode) {
+                    commandChar.setValue(BluetoothDeviceUtil.getCommandByteArray(BluetoothDeviceUtil.OFFLINE_MODE));
+                    mBle.requestWriteCharacteristic(connectingMac, commandChar, "");
+                } else {
+                    commandChar.setValue(BluetoothDeviceUtil.getCommandByteArray(BluetoothDeviceUtil.GET_STORED_DATA_NUM));
+                    mBle.requestWriteCharacteristic(connectingMac, commandChar, "");
+                    mBle.requestReadCharacteristic(connectingMac, dataChar);
+                }
+
+            }
+        };
+        setOffHostClickListener(mOffHostClickListener);
+    }
+
+    private void isOffHostModeFlow() {
+        BleGattCharacteristic infChar = mBle.getService(connectingMac, BluetoothDeviceUtil.service_uuid).getCharacteristic(BluetoothDeviceUtil.inf_characteristic_uuid);
+        mBle.requestReadCharacteristic(connectingMac, infChar);
+    }
+
+    private void getOffHostModeData() {
+        BleGattCharacteristic command = mBle.getService(connectingMac, BluetoothDeviceUtil.service_uuid).getCharacteristic(BluetoothDeviceUtil.command_characteristic_uuid);
+        command.setValue(BluetoothDeviceUtil.getCommandByteArray(BluetoothDeviceUtil.GET_OFFLINE_DATA));
+        mBle.requestWriteCharacteristic(connectingMac, command, "");
+    }
+
+    private void stopOffHostMode() {
+        // clear off host mode
+        BleGattCharacteristic commandChar = mBle.getService(connectingMac, BluetoothDeviceUtil.service_uuid).getCharacteristic(BluetoothDeviceUtil.command_characteristic_uuid);
+        commandChar.setValue(BluetoothDeviceUtil.getCommandByteArray(BluetoothDeviceUtil.CLEAR_OFFLINE_MODE_FLAG));
+        mBle.requestWriteCharacteristic(connectingMac, commandChar, "");
+
+        // change us to online
+        isOffMode = false;
     }
 
     private void changeCharacteristicFlow(int data, int command) {
@@ -165,6 +212,7 @@ public class GizwitsFragment extends BluetoothFragment {
                 setStatusTitle("");
                 mBle.disconnect(connectingMac);
                 connectingMac = DEVICE_MAC;
+                device = null;
                 break;
             case R.id.action_reset:
                 if (getStatusTitle().equals(getString(R.string.status_connected))) {
@@ -251,6 +299,7 @@ public class GizwitsFragment extends BluetoothFragment {
                 mBle.discoverServices(connectingMac);
             } else if (BleService.BLE_GATT_DISCONNECTED.equals(intent.getAction())) {
                 setStatusTitle(R.string.status_disconnect);
+                device = null;
             } else if (BleService.BLE_SERVICE_DISCOVERED.equals(intent.getAction())) {
                 mTimeData.setServiceStopTime(System.currentTimeMillis());
                 BleGattService service = mBle.getService(connectingMac, BluetoothDeviceUtil.service_uuid);
@@ -259,20 +308,68 @@ public class GizwitsFragment extends BluetoothFragment {
 //                    BluetoothGattCharacteristic characteristic = getBluetoothGatt().getService(BluetoothDeviceUtil.service_uuid).getCharacteristic(BluetoothDeviceUtil.notify_characteristic_uuid);
 //                    BluetoothGattDescriptor descriptor = characteristic.getDescriptor(BluetoothDeviceUtil.DESC_CCC);
 //                    enableCharacteristicNotification(getBluetoothGatt(), characteristic, descriptor.getUuid().toString());
+                    Log.d(TAG, "Enable Notify!");
+                    BleGattCharacteristic notifyChar = mBle.getService(connectingMac, BluetoothDeviceUtil.service_uuid).getCharacteristic(BluetoothDeviceUtil.notify_characteristic_uuid);
+                    mBle.requestCharacteristicNotification(connectingMac, notifyChar);
                 } else {
                     mTimeData.setFailMessage("没有所需service");
                     mTimeData.setIsNotifyPassed(false);
                 }
+                isOffHostModeFlow();
             } else if (BleService.BLE_CHARACTERISTIC_WRITE.equals(intent.getAction())) {
                 // TODO onCharacteristicWrite
             } else if (BleService.BLE_CHARACTERISTIC_READ.equals(intent.getAction())) {
                 // TODO onCharacteristicRead
                 byte[] val = intent.getExtras().getByteArray(BleService.EXTRA_VALUE);
-                Log.d(TAG, "inf read " + HexUtil.encodeHexStr(val));
-                if (HexUtil.encodeHexStr(val).equals("02")) {
-                    Toast.makeText(getActivity(), "操作成功!", Toast.LENGTH_SHORT).show();
+                String uuid = intent.getExtras().getString(BleService.EXTRA_UUID);
+                Log.d(TAG, "read " + HexUtil.encodeHexStr(val));
+                if (uuid.equals(BluetoothDeviceUtil.inf_characteristic_uuid.toString())) {
+                    if (HexUtil.encodeHexStr(val).equals("02")) {
+                        Toast.makeText(getActivity(), "操作成功!", Toast.LENGTH_SHORT).show();
+                    }
+
+                    if (HexUtil.encodeHexStr(val).equals("01")) {
+                        Toast.makeText(getActivity(), "设备运行在脱机模式!", Toast.LENGTH_SHORT).show();
+                        isOffMode = true;
+                    }
                 }
 
+                if (uuid.equals(BluetoothDeviceUtil.data_characteristic_uuid.toString())) {
+                    try {
+                        mOffHostModel.setDistance("总数据 :" + BluetoothDeviceUtil.getOffHostDataNumber(val));
+                        mOffHostModel.setCount(BluetoothDeviceUtil.getOffHostDataNumber(val));
+
+                        if (BluetoothDeviceUtil.getOffHostDataNumber(val) < 3) {
+                            stopOffHostMode();
+                        } else {
+                            getOffHostModeData();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                }
+
+            } else if (BleService.BLE_CHARACTERISTIC_CHANGED.equals(intent.getAction())) {
+                byte[] val = intent.getExtras().getByteArray(BleService.EXTRA_VALUE);
+                if (val.length < 3) {
+                    // is normal data;
+                } else {
+                    // is off host mode data
+                    if (mOffHostModel.getData().size() < mOffHostModel.getCount()) {
+                        mOffHostModel.appendData(val);
+                    }
+
+                    if (mOffHostModel.getData().size() >= mOffHostModel.getCount()) {
+                        byte[] dataArray = new byte[mOffHostModel.getData().size()];
+                        for (int i = 0 ; i < mOffHostModel.getData().size(); i++) {
+                            dataArray[i] = mOffHostModel.getData().get(i);
+                        }
+                        mOffHostModel.setDistance(mOffHostModel.getDistance() + "\n" + HexUtil.encodeHexStr(dataArray));
+
+                        stopOffHostMode();
+                    }
+                }
             }
 
             getActivity().runOnUiThread(new Runnable() {

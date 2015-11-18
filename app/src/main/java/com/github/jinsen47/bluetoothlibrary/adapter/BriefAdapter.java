@@ -120,7 +120,7 @@ public class BriefAdapter extends RecyclerView.Adapter{
 
         if (position == Mode.OffHost.ordinal()) {
             OffHostHolder offHostHolder = ((OffHostHolder) holder);
-            offHostHolder.textDistance.setText(mContext.getText(R.string.off_host_distance_title) + offHostData.getDistance());
+            offHostHolder.textDistance.setText(offHostData.getDistance());
         }
     }
 

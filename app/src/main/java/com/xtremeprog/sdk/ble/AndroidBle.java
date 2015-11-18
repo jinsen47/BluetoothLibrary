@@ -52,8 +52,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.apache.commons.codec.binary.Hex;
-
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -68,6 +66,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.util.Log;
 
+import com.litesuits.bluetooth.utils.HexUtil;
 import com.xtremeprog.sdk.ble.BleRequest.RequestType;
 
 @SuppressLint("NewApi")
@@ -145,7 +144,7 @@ public class AndroidBle implements IBle, IBleRequestHandler {
 				BluetoothGattCharacteristic characteristic) {
 			String address = gatt.getDevice().getAddress();
 			Log.d(TAG, "onCharacteristicChanged " + address);
-			Log.d(TAG, new String(Hex.encodeHex(characteristic.getValue())));
+			Log.d(TAG, new String(HexUtil.encodeHex(characteristic.getValue())));
 			mService.bleCharacteristicChanged(address, characteristic.getUuid()
 					.toString(), characteristic.getValue());
 		}
@@ -399,7 +398,7 @@ public class AndroidBle implements IBle, IBleRequestHandler {
 			return false;
 		}
 
-		Log.d("blelib", new String(Hex.encodeHex(characteristic.getGattCharacteristicA().getValue())));
+		Log.d("blelib", new String(HexUtil.encodeHex(characteristic.getGattCharacteristicA().getValue())));
 		return gatt
 				.writeCharacteristic(characteristic.getGattCharacteristicA());
 	}

@@ -10,6 +10,7 @@ import com.github.jinsen47.bluetoothlibrary.adapter.BriefAdapter;
 import com.github.jinsen47.bluetoothlibrary.adapter.PileLayoutManager;
 import com.github.jinsen47.bluetoothlibrary.model.CycleTestModel;
 import com.github.jinsen47.bluetoothlibrary.model.LogModel;
+import com.github.jinsen47.bluetoothlibrary.model.OffHostModel;
 import com.github.jinsen47.bluetoothlibrary.model.TimeModel;
 
 /**
@@ -64,8 +65,17 @@ public abstract class BluetoothFragment extends BaseFragment {
         mAdapter.notifyDataSetChanged();
     }
 
+    protected void setOffHostData(OffHostModel data) {
+        mAdapter.setOffHostData(data);
+        mAdapter.notifyDataSetChanged();
+    }
+
     protected void setLaunchClickListener(BriefAdapter.OnLaunchClickListener listener) {
         mAdapter.setOnLaunchClickListener(listener);
+    }
+
+    protected void setOffHostClickListener(BriefAdapter.OnOffHostClickListener listener) {
+        mAdapter.setOnOffHostClickListener(listener);
     }
 
     protected void notifyDatasetChanged() {

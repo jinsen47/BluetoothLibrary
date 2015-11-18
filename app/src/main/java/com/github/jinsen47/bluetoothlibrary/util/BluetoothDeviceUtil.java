@@ -1,6 +1,7 @@
 package com.github.jinsen47.bluetoothlibrary.util;
 
 import java.nio.ByteBuffer;
+import java.util.IllegalFormatException;
 import java.util.UUID;
 
 /**
@@ -16,6 +17,10 @@ public class BluetoothDeviceUtil {
     public static final UUID DESC_CCC = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb");
 
     public static final int DEVICE_RESET = 0x03;
+    public static final int OFFLINE_MODE = 0x04;
+    public static final int GET_OFFLINE_DATA = 0x0B;
+    public static final int GET_STORED_DATA_NUM = 0x10;
+    public static final int CLEAR_OFFLINE_MODE_FLAG = 0x13;
     public static final int CHANGE_MIN_INTERVAL = 0x05;
     public static final int CHANGE_MAX_INTERVAL = 0x06;
     public static final int CHANGE_ADV_INTERVAL = 0x09;
@@ -68,5 +73,16 @@ public class BluetoothDeviceUtil {
         byte[] ret;
         ret = ByteBuffer.allocate(1).put(0, ((byte)data)).array();
         return ret;
+    }
+
+    /**
+     * 我们的设备返回一个6字节的byte[], 其中前2字节表示总数据数目
+     * @param oriData
+     * @return
+     */
+    public static int getOffHostDataNumber(byte[] oriData) throws Exception {
+        if (oriData.length < 2) throw new Exception("the length of data must be 6");
+        ByteBuffer wrapped = ByteBuffer.wrap(oriData, 0, 2);
+        return wrapped.getShort();
     }
 }
